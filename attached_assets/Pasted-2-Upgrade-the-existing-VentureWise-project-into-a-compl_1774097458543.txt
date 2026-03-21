@@ -1,0 +1,212 @@
+2"}
+Upgrade the existing "VentureWise" project into a complete professional business platform with realistic analysis, admin control, hiring system, and investment marketplace.
+
+⚙️ Tech Stack (keep and improve):
+- Backend: FastAPI (Python)
+- Frontend: React + Vite
+- Database: SQLite (structured for easy PostgreSQL upgrade)
+- ORM: SQLAlchemy
+- Validation: Pydantic
+
+📁 Keep and improve structure:
+/venturewise
+  /backend
+    main.py
+    database.py
+    models.py
+    schemas.py
+    crud.py
+    /routes
+    /services
+  /frontend
+    /src
+      /components
+      /pages
+      /services
+  /screenshots
+  README.md
+
+---
+
+🧠 CORE UPGRADE FEATURES:
+
+1. Advanced Feasibility Analysis Engine (VERY IMPORTANT)
+Create realistic, rule-based analysis (NOT random):
+
+Return:
+- success_score (0–100)
+- risk_level (Low / Medium / High)
+- market_demand
+- competition_level
+- estimated_monthly_revenue (range)
+- explanation (human-like paragraph)
+
+Logic examples:
+- Food → high demand
+- High budget → lower risk
+- Small city → lower competition
+- High competition → lower score
+
+---
+
+2. Admin System (simple role-based system)
+
+Add admin role inside Users table.
+
+Admin can:
+- Add job opportunities
+- Add startup ideas for funding
+- View users
+- Delete or approve projects
+
+Endpoints:
+POST /admin/job
+POST /admin/startup
+GET /admin/users
+DELETE /admin/project/{id}
+
+---
+
+3. Job Application System
+
+Entities:
+- Jobs
+- Applicants
+- Applications
+
+Features:
+- Users apply with:
+  name, skills, experience, CV text
+- Store applications in database
+- One job → many applicants
+
+Endpoints:
+GET /jobs
+POST /jobs
+POST /apply/{job_id}
+
+---
+
+4. Startup Ideas Marketplace
+
+Admin adds startup ideas needing funding.
+
+Fields:
+- title
+- description
+- category
+- required_budget
+- expected_return
+
+Users can browse ideas.
+
+Endpoint:
+GET /startup-ideas
+
+---
+
+5. Improve Existing Business Analysis Modules:
+
+- Market Analysis
+- Pricing Strategy
+- Marketing Plan
+- Branding Suggestions
+- Product Suggestions
+- Hiring Needs
+
+Make outputs structured and realistic.
+
+---
+
+🧩 DATABASE (expand to 12+ entities):
+
+Must include:
+- Users (with role: user/admin)
+- Projects
+- Categories
+- Locations
+- Analyses
+- Competitors
+- PricingStrategies
+- MarketingPlans
+- BrandSuggestions
+- Products
+- JobRoles
+- Jobs
+- Applicants
+- Applications
+- StartupIdeas
+
+Relationships:
+- User → Projects (1:M)
+- Projects → Analysis (1:1)
+- Projects ↔ Products (M:M)
+- Jobs → Applications (1:M)
+
+---
+
+🎨 FRONTEND (React + Vite)
+
+Pages:
+
+1. Home (project input form)
+2. Dashboard (analysis results)
+3. Projects History
+4. Jobs Page
+5. Apply Page
+6. Startup Ideas Page
+7. Admin Dashboard
+
+---
+
+UI Requirements:
+
+- Modern premium design
+- Dark + light mode toggle
+- Card-based layout
+- Responsive
+- Business-style colors (dark blue, gold accent)
+- Charts or progress bars for score
+
+---
+
+🛡️ CODE QUALITY:
+
+- Clean modular structure
+- Use services for logic
+- Validate with Pydantic
+- Handle errors properly
+- Add comments
+- No broken code
+
+---
+
+📸 SCREENSHOTS:
+
+Add instructions to save app screenshots inside /screenshots folder.
+
+---
+
+📄 README.md:
+
+Update with:
+- Full description
+- Features (analysis, jobs, admin, investment)
+- Setup instructions
+- API endpoints
+- Screenshots section
+
+---
+
+🚀 FINAL GOAL:
+
+The platform should feel like a real startup product:
+- Smart business analysis
+- Hiring system
+- Investment marketplace
+- Admin control panel
+
+Everything must run locally without errors.
+The project must be clean, downloadable, and ready for GitHub upload.
+
+DO NOT leave placeholders. Generate working, connected

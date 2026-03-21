@@ -1,0 +1,930 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: VentureWise Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: projects
+    description: Business project operations
+  - name: analysis
+    description: Business feasibility analysis
+  - name: jobs
+    description: Job opportunities
+  - name: applications
+    description: Job applications
+  - name: startup-ideas
+    description: Startup ideas marketplace
+  - name: admin
+    description: Admin operations
+  - name: categories
+    description: Business categories
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a new business project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          description: Project created with analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectWithAnalysis"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get a specific project with analysis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project with full analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectWithAnalysis"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a project (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List all business categories
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List all job opportunities
+      responses:
+        "200":
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+    post:
+      operationId: createJob
+      tags: [jobs]
+      summary: Create a new job opportunity (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobRequest"
+      responses:
+        "201":
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get job details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /jobs/{jobId}/apply:
+    post:
+      operationId: applyForJob
+      tags: [applications]
+      summary: Apply for a job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApplicationRequest"
+      responses:
+        "201":
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /jobs/{jobId}/applications:
+    get:
+      operationId: getJobApplications
+      tags: [applications]
+      summary: Get all applications for a job (admin)
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+
+  /startup-ideas:
+    get:
+      operationId: listStartupIdeas
+      tags: [startup-ideas]
+      summary: List all startup ideas needing funding
+      responses:
+        "200":
+          description: List of startup ideas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StartupIdea"
+    post:
+      operationId: createStartupIdea
+      tags: [startup-ideas]
+      summary: Add a startup idea (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStartupIdeaRequest"
+      responses:
+        "201":
+          description: Startup idea created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StartupIdea"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: List all users (admin)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Get platform statistics (admin)
+      responses:
+        "200":
+          description: Platform statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformStats"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        icon:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+        - slug
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - createdAt
+
+    CreateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+        ownerName:
+          type: string
+          minLength: 2
+        ownerEmail:
+          type: string
+          format: email
+        businessType:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        citySize:
+          type: string
+          enum: [small, medium, large, metro]
+        budget:
+          type: number
+          minimum: 0
+        targetMarket:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - ownerName
+        - ownerEmail
+        - businessType
+        - category
+        - location
+        - citySize
+        - budget
+        - targetMarket
+        - description
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        ownerName:
+          type: string
+        ownerEmail:
+          type: string
+        businessType:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        citySize:
+          type: string
+        budget:
+          type: number
+        targetMarket:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - ownerName
+        - ownerEmail
+        - businessType
+        - category
+        - location
+        - citySize
+        - budget
+        - targetMarket
+        - description
+        - createdAt
+
+    SubScores:
+      type: object
+      properties:
+        marketDemandScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        competitionScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        financialStrengthScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        locationScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        growthPotentialScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        executionReadinessScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+      required:
+        - marketDemandScore
+        - competitionScore
+        - financialStrengthScore
+        - locationScore
+        - growthPotentialScore
+        - executionReadinessScore
+
+    RevenueDataPoint:
+      type: object
+      properties:
+        month:
+          type: string
+        min:
+          type: number
+        max:
+          type: number
+        projected:
+          type: number
+      required:
+        - month
+        - min
+        - max
+        - projected
+
+    MarketSegment:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+        color:
+          type: string
+      required:
+        - name
+        - value
+        - color
+
+    KeyFactor:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - title
+        - description
+
+    FeasibilityAnalysis:
+      type: object
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        successScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        riskLevel:
+          type: string
+          enum: [Low, Medium, High]
+        marketDemand:
+          type: string
+          enum: [Low, Medium, High, Very High]
+        competitionLevel:
+          type: string
+          enum: [Low, Medium, High, Very High]
+        estimatedRevenueMin:
+          type: number
+        estimatedRevenueMax:
+          type: number
+        explanation:
+          type: string
+        marketAnalysis:
+          type: string
+        pricingStrategy:
+          type: string
+        marketingPlan:
+          type: string
+        brandingSuggestions:
+          type: string
+        productSuggestions:
+          type: string
+        hiringNeeds:
+          type: string
+        competitors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Competitor"
+        subScores:
+          $ref: "#/components/schemas/SubScores"
+        revenueProjection:
+          type: array
+          items:
+            $ref: "#/components/schemas/RevenueDataPoint"
+        marketBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketSegment"
+        keyStrengths:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyFactor"
+        keyRisks:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyFactor"
+        breakEvenMonths:
+          type: integer
+        roiPercent:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - projectId
+        - successScore
+        - riskLevel
+        - marketDemand
+        - competitionLevel
+        - estimatedRevenueMin
+        - estimatedRevenueMax
+        - explanation
+        - marketAnalysis
+        - pricingStrategy
+        - marketingPlan
+        - brandingSuggestions
+        - productSuggestions
+        - hiringNeeds
+        - competitors
+        - subScores
+        - revenueProjection
+        - marketBreakdown
+        - keyStrengths
+        - keyRisks
+        - breakEvenMonths
+        - roiPercent
+        - createdAt
+
+    Competitor:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        threatLevel:
+          type: string
+          enum: [Low, Medium, High]
+        notes:
+          type: string
+      required:
+        - name
+        - type
+        - threatLevel
+        - notes
+
+    ProjectWithAnalysis:
+      type: object
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        analysis:
+          $ref: "#/components/schemas/FeasibilityAnalysis"
+      required:
+        - project
+        - analysis
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        company:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [full-time, part-time, contract, remote, internship]
+        category:
+          type: string
+        description:
+          type: string
+        requirements:
+          type: string
+        salaryMin:
+          type: number
+          nullable: true
+        salaryMax:
+          type: number
+          nullable: true
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive]
+        isActive:
+          type: boolean
+        applicantCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - company
+        - location
+        - type
+        - category
+        - description
+        - requirements
+        - experienceLevel
+        - isActive
+        - applicantCount
+        - createdAt
+
+    CreateJobRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 2
+        company:
+          type: string
+          minLength: 2
+        location:
+          type: string
+        type:
+          type: string
+          enum: [full-time, part-time, contract, remote, internship]
+        category:
+          type: string
+        description:
+          type: string
+          minLength: 10
+        requirements:
+          type: string
+          minLength: 10
+        salaryMin:
+          type: number
+          nullable: true
+        salaryMax:
+          type: number
+          nullable: true
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive]
+      required:
+        - title
+        - company
+        - location
+        - type
+        - category
+        - description
+        - requirements
+        - experienceLevel
+
+    CreateApplicationRequest:
+      type: object
+      properties:
+        applicantName:
+          type: string
+          minLength: 2
+        applicantEmail:
+          type: string
+          format: email
+        skills:
+          type: string
+          minLength: 5
+        experience:
+          type: string
+          minLength: 10
+        cvText:
+          type: string
+          minLength: 20
+        coverLetter:
+          type: string
+          nullable: true
+      required:
+        - applicantName
+        - applicantEmail
+        - skills
+        - experience
+        - cvText
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+        jobId:
+          type: integer
+        applicantName:
+          type: string
+        applicantEmail:
+          type: string
+        skills:
+          type: string
+        experience:
+          type: string
+        cvText:
+          type: string
+        coverLetter:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, reviewing, shortlisted, rejected, hired]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - jobId
+        - applicantName
+        - applicantEmail
+        - skills
+        - experience
+        - cvText
+        - status
+        - createdAt
+
+    StartupIdea:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        requiredBudget:
+          type: number
+        expectedReturn:
+          type: number
+        riskLevel:
+          type: string
+          enum: [Low, Medium, High]
+        stage:
+          type: string
+          enum: [idea, mvp, growth, scaling]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - description
+        - category
+        - requiredBudget
+        - expectedReturn
+        - riskLevel
+        - stage
+        - isActive
+        - createdAt
+
+    CreateStartupIdeaRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 2
+        description:
+          type: string
+          minLength: 20
+        category:
+          type: string
+        requiredBudget:
+          type: number
+          minimum: 0
+        expectedReturn:
+          type: number
+          minimum: 0
+        riskLevel:
+          type: string
+          enum: [Low, Medium, High]
+        stage:
+          type: string
+          enum: [idea, mvp, growth, scaling]
+      required:
+        - title
+        - description
+        - category
+        - requiredBudget
+        - expectedReturn
+        - riskLevel
+        - stage
+
+    PlatformStats:
+      type: object
+      properties:
+        totalProjects:
+          type: integer
+        totalJobs:
+          type: integer
+        totalApplications:
+          type: integer
+        totalStartupIdeas:
+          type: integer
+        totalUsers:
+          type: integer
+        avgSuccessScore:
+          type: number
+      required:
+        - totalProjects
+        - totalJobs
+        - totalApplications
+        - totalStartupIdeas
+        - totalUsers
+        - avgSuccessScore

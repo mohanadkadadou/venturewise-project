@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "VentureWise Platform"
+version = "1.0.0"
+id = "artifacts/venturewise"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19786
+
+[services.development]
+run = "pnpm --filter @workspace/venturewise run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/venturewise", "run", "build" ]
+publicDir = "artifacts/venturewise/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19786"
+BASE_PATH = "/"
